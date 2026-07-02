@@ -1,0 +1,15 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<HomePage>
+@{
+    Layout = "~/Views/_Layout.cshtml";
+    ViewData["Title"] = string.IsNullOrWhiteSpace(Model.MetaTitle) ? Model.Name : Model.MetaTitle;
+    ViewData["MetaDescription"] = Model.MetaDescription;
+}
+
+<section class="hero">
+    <h1>@(string.IsNullOrWhiteSpace(Model.Heading) ? Model.Name : Model.Heading)</h1>
+
+    @if (Model.BodyText is not null)
+    {
+        <div class="body">@Model.BodyText</div>
+    }
+</section>

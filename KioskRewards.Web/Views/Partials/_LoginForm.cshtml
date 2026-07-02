@@ -1,0 +1,36 @@
+@using KioskRewards.Web.Controllers
+@using Umbraco.Cms.Web.Common
+@model KioskRewards.Web.Models.LoginFormModel
+@inject UmbracoHelper Umbraco
+@{
+    // BeginUmbracoForm wires the POST to MemberAuthController.Login and renders both the antiforgery
+    // token and the Umbraco route token (ufprt). asp-for tag helpers repopulate from ModelState on
+    // a failed post, so the username survives a re-render even though we pass a fresh model in.
+    // Labels keep asp-for (for the "for=" accessibility attribute) but supply their own text, which
+    // the LabelTagHelper leaves untouched instead of falling back to the [Display] attribute.
+}
+
+@using (Html.BeginUmbracoForm<MemberAuthController>(nameof(MemberAuthController.Login)))
+{
+    <div asp-validation-summary="ModelOnly" class="form-errors"></div>
+
+    <input type="hidden" asp-for="ReturnUrl" />
+
+    <div class="field">
+        <label asp-for="Username">@Umbraco.GetDictionaryValue("Login.UsernameLabel")</label>
+        <input asp-for="Username" autocomplete="username" />
+        <span asp-validation-for="Username"></span>
+    </div>
+
+    <div class="field">
+        <label asp-for="Password">@Umbraco.GetDictionaryValue("Login.PasswordLabel")</label>
+        <input asp-for="Password" autocomplete="current-password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <label class="checkbox">
+        <input asp-for="RememberMe" /> @Umbraco.GetDictionaryValue("Login.RememberMeLabel")
+    </label>
+
+    <button type="submit">@Umbraco.GetDictionaryValue("Login.SubmitButton")</button>
+}

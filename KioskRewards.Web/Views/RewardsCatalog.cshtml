@@ -1,0 +1,73 @@
+﻿@using KioskRewards.Application.Abstractions
+@using KioskRewards.Web.Controllers
+@using Umbraco.Cms.Core.Security
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<RewardsCatalog>
+@inject IMemberManager MemberManager
+@inject IPointsService PointsService
+@{
+    // Convention rendering, no custom controller: this page has nothing to decide before rendering,
+    // just a list of Reward children plus a balance lookup — @inject is enough (same pattern as
+    // Partials/_LoginStatus.cshtml), so route hijacking would be unnecessary complexity here.
+    Layout = "~/Views/_Layout.cshtml";
+    ViewData["Title"] = Model.Name;
+
+    var isLoggedIn = MemberManager.IsLoggedIn();
+    var balance = isLoggedIn
+        ? await PointsService.GetBalanceAsync((await MemberManager.GetCurrentMemberAsync())!.Key)
+        : 0;
+
+    // Resolve the actual LoginPage node (not a hardcoded path) so the link keeps the current culture prefix (e.g. /en/).
+    var loginUrl = Model.AncestorOrSelf(1).DescendantsOrSelf<LoginPage>().FirstOrDefault()?.Url() ?? "/login/";
+}
+
+<h1>@Model.Name</h1>
+
+@if (TempData["RedeemMessage"] is string message)
+{
+    <p class="@(TempData["RedeemSuccess"] as bool? == true ? "positive" : "negative")">@message</p>
+}
+
+@if (isLoggedIn)
+{
+    <p>@Umbraco.GetDictionaryValue("Rewards.YourBalancePrefix") <strong>@balance</strong> @Umbraco.GetDictionaryValue("Rewards.PointsSuffix")</p>
+}
+
+@{
+    var rewards = Model.Children<Reward>().ToList();
+}
+
+@if (rewards.Count == 0)
+{
+    <p>@Umbraco.GetDictionaryValue("Rewards.NoRewardsAvailable")</p>
+}
+else
+{
+    <div class="rewards-grid">
+        @foreach (var reward in rewards)
+        {
+            var canAfford = isLoggedIn && balance >= reward.PointsCost;
+            <div class="reward-card">
+                @if (reward.Image?.Content is not null)
+                {
+                    <img src="@reward.Image.Content.Url()" alt="@reward.Title" />
+                }
+                <h3>@reward.Title</h3>
+                <p>@reward.Description</p>
+                <p class="reward-cost">@reward.PointsCost @Umbraco.GetDictionaryValue("Rewards.PointsSuffix")</p>
+
+                @if (isLoggedIn)
+                {
+                    using (Html.BeginUmbracoForm<RewardsController>(nameof(RewardsController.Redeem)))
+                    {
+                        <input type="hidden" name="rewardKey" value="@reward.Key" />
+                        <button type="submit" disabled="@(canAfford ? null : "disabled")">@Umbraco.GetDictionaryValue("Rewards.RedeemButton")</button>
+                    }
+                }
+                else
+                {
+                    <a href="@loginUrl">@Umbraco.GetDictionaryValue("Rewards.LoginToRedeem")</a>
+                }
+            </div>
+        }
+    </div>
+}

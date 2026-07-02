@@ -1,0 +1,39 @@
+{
+  "$schema": "appsettings-schema.json",
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information"
+    },
+    "WriteTo": [
+      {
+        "Name": "Async",
+        "Args": {
+          "configure": [
+            {
+              "Name": "Console"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "ConnectionStrings": {
+    "umbracoDbDSN": "Data Source=|DataDirectory|/Umbraco.sqlite.db;Cache=Shared;Foreign Keys=True;Pooling=True",
+    "umbracoDbDSN_ProviderName": "Microsoft.Data.Sqlite",
+    "LoyaltyDb": "Data Source=|DataDirectory|/loyalty.sqlite.db;Cache=Shared;Foreign Keys=True;Pooling=True"
+  },
+  "Umbraco": {
+    "CMS": {
+      "Unattended": {
+        "InstallUnattended": true,
+        "UnattendedUserName": "Admin",
+        "UnattendedUserEmail": "admin@example.local",
+        "UnattendedUserPassword": "REPLACE_WITH_YOUR_OWN_DEV_PASSWORD_123!",
+        "UnattendedTelemetryLevel": "Detailed"
+      },
+      "Hosting": {
+        "Debug": true
+      }
+    }
+  }
+}

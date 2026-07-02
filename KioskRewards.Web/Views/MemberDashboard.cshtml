@@ -1,0 +1,47 @@
+@using KioskRewards.Domain.Enums
+@using KioskRewards.Web.Models
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<MemberDashboardViewModel>
+@{
+    Layout = "~/Views/_Layout.cshtml";
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>@Model.Name</h1>
+
+<section class="balance-card">
+    <span class="balance-label">@Umbraco.GetDictionaryValue("Dashboard.PointsBalanceLabel")</span>
+    <span class="balance-value">@Model.Balance</span>
+</section>
+
+<h2>@Umbraco.GetDictionaryValue("Dashboard.TransactionHistoryHeading")</h2>
+
+@if (Model.History.Count == 0)
+{
+    <p>@Umbraco.GetDictionaryValue("Dashboard.NoTransactionsYet")</p>
+}
+else
+{
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnDate")</th>
+                <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnType")</th>
+                <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnDescription")</th>
+                <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnAmount")</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tx in Model.History)
+            {
+                <tr>
+                    <td>@tx.CreatedUtc.ToLocalTime().ToString("g")</td>
+                    <td>@Umbraco.GetDictionaryValue(tx.Type == TransactionType.Redeem ? "Transaction.TypeRedeem" : "Transaction.TypeEarn")</td>
+                    <td>@tx.Description</td>
+                    <td class="@(tx.Type == TransactionType.Redeem ? "negative" : "positive")">
+                        @(tx.Type == TransactionType.Redeem ? "-" : "+")@tx.Amount
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

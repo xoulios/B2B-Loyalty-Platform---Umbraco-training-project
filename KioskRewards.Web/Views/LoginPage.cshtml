@@ -1,0 +1,20 @@
+@using KioskRewards.Web.Models
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LoginPage>
+@{
+    Layout = "~/Views/_Layout.cshtml";
+    ViewData["Title"] = Model.Name;
+
+    // If a protected page (Public Access) bounced the member here it may pass ?returnUrl=;
+    // otherwise default to the dashboard so a successful login lands somewhere useful.
+    // Resolve the actual node (not a hardcoded path) so the fallback keeps the current culture prefix (e.g. /en/).
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+    if (string.IsNullOrWhiteSpace(returnUrl))
+        returnUrl = Model.AncestorOrSelf(1).DescendantsOrSelf<MemberDashboard>().FirstOrDefault()?.Url() ?? "/dashboard/";
+
+    var form = new LoginFormModel { ReturnUrl = returnUrl };
+}
+
+<h1>@Umbraco.GetDictionaryValue("Login.Heading")</h1>
+<p>@Umbraco.GetDictionaryValue("Login.Subtitle")</p>
+
+@await Html.PartialAsync("Partials/_LoginForm", form)

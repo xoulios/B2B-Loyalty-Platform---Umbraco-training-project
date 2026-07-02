@@ -1,0 +1,27 @@
+@using KioskRewards.Web.Controllers
+@using Umbraco.Cms.Core.Security
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inject IMemberManager MemberManager
+@{
+    // Header widget: shows the member's name + a Logout button when signed in, otherwise a Login link.
+    // IsLoggedIn() is a sync bool; GetCurrentMemberAsync() returns the member identity (or null).
+    // Resolve the actual nodes (not hardcoded paths) so the link keeps the current request's culture prefix (e.g. /en/).
+    var home = Model.AncestorOrSelf(1);
+    var dashboardUrl = home.DescendantsOrSelf<MemberDashboard>().FirstOrDefault()?.Url() ?? "/dashboard/";
+    var loginUrl = home.DescendantsOrSelf<LoginPage>().FirstOrDefault()?.Url() ?? "/login/";
+}
+
+@if (MemberManager.IsLoggedIn())
+{
+    var member = await MemberManager.GetCurrentMemberAsync();
+    <a href="@dashboardUrl">@Umbraco.GetDictionaryValue("Header.MyDashboard")</a>
+    <span class="member-name">@Umbraco.GetDictionaryValue("Header.Greeting"), @(member?.Name ?? member?.UserName)</span>
+    @using (Html.BeginUmbracoForm<MemberAuthController>(nameof(MemberAuthController.Logout)))
+    {
+        <button type="submit" class="linkbtn">@Umbraco.GetDictionaryValue("Header.Logout")</button>
+    }
+}
+else
+{
+    <a href="@loginUrl">@Umbraco.GetDictionaryValue("Header.Login")</a>
+}
