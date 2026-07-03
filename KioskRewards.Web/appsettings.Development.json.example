@@ -33,6 +33,10 @@
       },
       "Hosting": {
         "Debug": true
+      },
+      "DeliveryApi": {
+        "PublicAccess": false,
+        "ApiKey": "REPLACE_WITH_YOUR_OWN_RANDOM_API_KEY"
       }
     }
   }

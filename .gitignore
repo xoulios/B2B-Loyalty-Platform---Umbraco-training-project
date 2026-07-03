@@ -35,3 +35,6 @@ Logs/
 # ---- Local secrets / machine-specific config ----
 KioskRewards.Web/appsettings.Development.json
 .claude/settings.local.json
+
+# ---- Local-only project notes (kept on disk, not published to GitHub) ----
+docs/
