@@ -34,7 +34,9 @@ Logs/
 
 # ---- Local secrets / machine-specific config ----
 KioskRewards.Web/appsettings.Development.json
-.claude/settings.local.json
+
+# ---- Claude Code local tooling config (machine-specific, not for a shared repo) ----
+.claude/
 
 # ---- Local-only project notes (kept on disk, not published to GitHub) ----
 docs/

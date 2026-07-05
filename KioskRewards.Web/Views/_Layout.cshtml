@@ -36,9 +36,11 @@
             {
                 <a href="@child.Url()">@child.Name</a>
             }
-            @* Grouped so both sit pinned to the far right of the nav row (see .nav-actions in
-               kioskrewards.css), instead of floating in between the page links. *@
+            @* .nav-actions (kioskrewards.css) pins this whole group to the far right of the nav row.
+               Order matters here: login-status first, lang-switcher LAST, so the lang switcher ends
+               up as the true outermost/rightmost element - not "sandwiched" before login-status. *@
             <div class="nav-actions">
+                @await Html.PartialAsync("Partials/_LoginStatus")
                 <span class="lang-switcher">
                     @foreach (var culture in Model.Cultures.Keys.OrderBy(c => c))
                     {
@@ -57,7 +59,6 @@
                         }
                     }
                 </span>
-                @await Html.PartialAsync("Partials/_LoginStatus")
             </div>
         </nav>
     </header>
