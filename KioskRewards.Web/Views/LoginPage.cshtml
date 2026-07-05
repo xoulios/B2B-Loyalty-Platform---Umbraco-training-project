@@ -14,7 +14,10 @@
     var form = new LoginFormModel { ReturnUrl = returnUrl };
 }
 
-<h1>@Umbraco.GetDictionaryValue("Login.Heading")</h1>
-<p>@Umbraco.GetDictionaryValue("Login.Subtitle")</p>
+@* Wrapped in an .auth-card for the Streak centered-card treatment. *@
+<div class="auth-card">
+    <h1>@Umbraco.GetDictionaryValue("Login.Heading")</h1>
+    <p class="auth-sub">@Umbraco.GetDictionaryValue("Login.Subtitle")</p>
 
-@await Html.PartialAsync("Partials/_LoginForm", form)
+    @await Html.PartialAsync("Partials/_LoginForm", form)
+</div>

@@ -29,7 +29,7 @@
 
 @if (isLoggedIn)
 {
-    <p>@Umbraco.GetDictionaryValue("Rewards.YourBalancePrefix") <strong>@balance</strong> @Umbraco.GetDictionaryValue("Rewards.PointsSuffix")</p>
+    <p class="rewards-balance">@Umbraco.GetDictionaryValue("Rewards.YourBalancePrefix") <strong>@balance</strong> @Umbraco.GetDictionaryValue("Rewards.PointsSuffix")</p>
 }
 
 @{
@@ -46,27 +46,38 @@ else
         @foreach (var reward in rewards)
         {
             var canAfford = isLoggedIn && balance >= reward.PointsCost;
-            <div class="reward-card">
-                @if (reward.Image?.Content is not null)
-                {
-                    <img src="@reward.Image.Content.Url()" alt="@reward.Title" />
-                }
-                <h3>@reward.Title</h3>
-                <p>@reward.Description</p>
-                <p class="reward-cost">@reward.PointsCost @Umbraco.GetDictionaryValue("Rewards.PointsSuffix")</p>
-
-                @if (isLoggedIn)
-                {
-                    using (Html.BeginUmbracoForm<RewardsController>(nameof(RewardsController.Redeem)))
+            <div class="reward-card@(isLoggedIn && !canAfford ? " reward-locked" : "")">
+                @* Media: real photo when present, striped placeholder otherwise.
+                   The points cost lives in the coin badge; title sits over the scrim. *@
+                <div class="reward-media">
+                    @if (reward.Image?.Content is not null)
                     {
-                        <input type="hidden" name="rewardKey" value="@reward.Key" />
-                        <button type="submit" disabled="@(canAfford ? null : "disabled")">@Umbraco.GetDictionaryValue("Rewards.RedeemButton")</button>
+                        <img src="@reward.Image.Content.Url()" alt="@reward.Title" />
                     }
-                }
-                else
-                {
-                    <a href="@loginUrl">@Umbraco.GetDictionaryValue("Rewards.LoginToRedeem")</a>
-                }
+                    else
+                    {
+                        <span class="reward-photo-ph">PRODUCT PHOTO</span>
+                    }
+                    <span class="reward-coin" aria-label="@reward.PointsCost @Umbraco.GetDictionaryValue("Rewards.PointsSuffix")">@reward.PointsCost</span>
+                    <span class="reward-title">@reward.Title</span>
+                </div>
+
+                <div class="reward-body">
+                    <p class="reward-desc">@reward.Description</p>
+
+                    @if (isLoggedIn)
+                    {
+                        using (Html.BeginUmbracoForm<RewardsController>(nameof(RewardsController.Redeem)))
+                        {
+                            <input type="hidden" name="rewardKey" value="@reward.Key" />
+                            <button type="submit" class="btn-primary" disabled="@(canAfford ? null : "disabled")">@Umbraco.GetDictionaryValue("Rewards.RedeemButton")</button>
+                        }
+                    }
+                    else
+                    {
+                        <a class="btn-ghost" href="@loginUrl">@Umbraco.GetDictionaryValue("Rewards.LoginToRedeem")</a>
+                    }
+                </div>
             </div>
         }
     </div>

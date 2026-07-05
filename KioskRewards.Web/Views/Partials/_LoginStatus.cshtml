@@ -23,5 +23,6 @@
 }
 else
 {
-    <a href="@loginUrl">@Umbraco.GetDictionaryValue("Header.Login")</a>
+    @* Filled indigo pill in the header (btn-primary). *@
+    <a class="btn-primary" href="@loginUrl">@Umbraco.GetDictionaryValue("Header.Login")</a>
 }

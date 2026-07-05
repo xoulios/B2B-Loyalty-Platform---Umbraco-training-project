@@ -21,27 +21,32 @@
 }
 else
 {
-    <table class="history-table">
-        <thead>
-            <tr>
-                <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnDate")</th>
-                <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnType")</th>
-                <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnDescription")</th>
-                <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnAmount")</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var tx in Model.History)
-            {
+    <div class="history-wrap">
+        <table class="history-table">
+            <thead>
                 <tr>
-                    <td>@tx.CreatedUtc.ToLocalTime().ToString("g")</td>
-                    <td>@Umbraco.GetDictionaryValue(tx.Type == TransactionType.Redeem ? "Transaction.TypeRedeem" : "Transaction.TypeEarn")</td>
-                    <td>@tx.Description</td>
-                    <td class="@(tx.Type == TransactionType.Redeem ? "negative" : "positive")">
-                        @(tx.Type == TransactionType.Redeem ? "-" : "+")@tx.Amount
-                    </td>
+                    <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnDate")</th>
+                    <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnType")</th>
+                    <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnDescription")</th>
+                    <th>@Umbraco.GetDictionaryValue("Dashboard.ColumnAmount")</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var tx in Model.History)
+                {
+                    var isRedeem = tx.Type == TransactionType.Redeem;
+                    <tr>
+                        <td>@tx.CreatedUtc.ToLocalTime().ToString("g")</td>
+                        <td class="tx-type">
+                            <span class="tx-badge @(isRedeem ? "tx-redeem" : "tx-earn")">@Umbraco.GetDictionaryValue(isRedeem ? "Transaction.TypeRedeem" : "Transaction.TypeEarn")</span>
+                        </td>
+                        <td>@tx.Description</td>
+                        <td class="@(isRedeem ? "negative" : "positive")">
+                            @(isRedeem ? "-" : "+")@tx.Amount
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
