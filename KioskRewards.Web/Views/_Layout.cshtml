@@ -36,25 +36,29 @@
             {
                 <a href="@child.Url()">@child.Name</a>
             }
-            <span class="lang-switcher">
-                @foreach (var culture in Model.Cultures.Keys.OrderBy(c => c))
-                {
-                    var label = culture.Split('-')[0].ToUpperInvariant();
-                    if (string.Equals(culture, currentCulture, StringComparison.OrdinalIgnoreCase))
+            @* Grouped so both sit pinned to the far right of the nav row (see .nav-actions in
+               kioskrewards.css), instead of floating in between the page links. *@
+            <div class="nav-actions">
+                <span class="lang-switcher">
+                    @foreach (var culture in Model.Cultures.Keys.OrderBy(c => c))
                     {
-                        <span class="lang-current">@label</span>
-                    }
-                    else
-                    {
-                        var otherCultureUrl = Model.Url(culture: culture);
-                        if (!string.IsNullOrWhiteSpace(otherCultureUrl) && otherCultureUrl != "#")
+                        var label = culture.Split('-')[0].ToUpperInvariant();
+                        if (string.Equals(culture, currentCulture, StringComparison.OrdinalIgnoreCase))
                         {
-                            <a href="@otherCultureUrl">@label</a>
+                            <span class="lang-current">@label</span>
+                        }
+                        else
+                        {
+                            var otherCultureUrl = Model.Url(culture: culture);
+                            if (!string.IsNullOrWhiteSpace(otherCultureUrl) && otherCultureUrl != "#")
+                            {
+                                <a href="@otherCultureUrl">@label</a>
+                            }
                         }
                     }
-                }
-            </span>
-            @await Html.PartialAsync("Partials/_LoginStatus")
+                </span>
+                @await Html.PartialAsync("Partials/_LoginStatus")
+            </div>
         </nav>
     </header>
 

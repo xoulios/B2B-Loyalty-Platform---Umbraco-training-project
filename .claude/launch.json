@@ -5,10 +5,10 @@
       "name": "kioskrewards-web",
       "runtimeExecutable": "dotnet",
       "runtimeArgs": ["run", "--project", "KioskRewards.Web/KioskRewards.Web.csproj", "--no-build", "--no-launch-profile"],
-      "port": 10024,
+      "port": 10025,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:10024"
+        "ASPNETCORE_URLS": "http://localhost:10025"
       }
     },
     {

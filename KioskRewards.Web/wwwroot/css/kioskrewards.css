@@ -41,8 +41,16 @@
 
 * { box-sizing: border-box; }
 
+html { height: 100%; }
+
+/* display:flex column + main's flex:1 (below) is the sticky-footer trick: body is
+   always at least one viewport tall, so the footer sits at the bottom of the screen
+   on short pages instead of floating right under the content. */
 body {
   margin: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
   background: var(--kr-bg);
   color: var(--kr-ink);
   font-family: var(--kr-sans);
@@ -89,6 +97,12 @@ nav a:hover { color: var(--kr-indigo); }
 .member-name { color: var(--kr-muted); font-weight: 500; }
 nav form { display: inline; margin: 0; }
 
+/* Groups the lang-switcher + login/logout together and pushes them to the far
+   right of the nav row (margin-left:auto eats all the leftover space on that flex
+   line) so they stay visually separate from the page links instead of sitting
+   in the middle of them. Markup: <div class="nav-actions"> in _Layout.cshtml. */
+.nav-actions { display: flex; align-items: center; gap: .75rem; margin-left: auto; flex-wrap: wrap; }
+
 /* EL / EN switcher — <span class="lang-switcher"> with <a>/<span> children */
 .lang-switcher {
   display: inline-flex; align-items: center; gap: .35rem;
@@ -110,7 +124,11 @@ nav form { display: inline; margin: 0; }
 .linkbtn:hover { color: var(--kr-indigo); background: var(--kr-lilac-2); }
 
 /* ------------------------------------------------------------- Layout body */
-main { max-width: 960px; margin: 0 auto; padding: 2.25rem 1.5rem 3rem; }
+/* flex:1 makes main claim all leftover vertical space in the body column, which
+   is what actually shoves the footer down to the bottom of the viewport. */
+main { flex: 1 0 auto; width: 100%; max-width: 960px; margin: 0 auto; padding: 2.25rem 1.5rem 3rem; }
+
+header.site, footer.site { flex: none; }
 
 footer.site {
   text-align: center; color: var(--kr-muted);
@@ -179,7 +197,6 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
   box-shadow: 0 5px 0 var(--kr-shadow);
 }
 .claim-card h2 { margin-top: 0; }
-.claim-card .btn-primary { width: auto; padding-left: 1.6rem; padding-right: 1.6rem; }
 
 /* --------------------------------------------------------- History table */
 /* Optional wrapper <div class="history-wrap"> rounds the corners cleanly. */
@@ -258,11 +275,16 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
 }
 
 /* --------------------------------------------------------- Buttons */
+/* Content-width by default (a normal pill button) - NOT full-width. Full-width
+   is opt-in per context (see ".reward-body .btn-primary" etc. below), because a
+   full-width button only makes sense inside a fixed-width card column. Making it
+   the default here is what previously blew up the header's Login pill to span
+   the whole nav row once it wrapped onto its own line. */
 .btn-primary {
-  display: inline-flex; align-items: center; justify-content: center; width: 100%;
+  display: inline-flex; align-items: center; justify-content: center;
   font-family: var(--kr-sans); font-weight: 700; font-size: .82rem;
   color: #fff; background: var(--kr-indigo); border: none; border-radius: 999px;
-  padding: .6rem 1rem; min-height: 2.75rem; cursor: pointer;
+  padding: .6rem 1.6rem; min-height: 2.75rem; cursor: pointer;
   box-shadow: 0 3px 0 var(--kr-indigo-dk); text-decoration: none;
 }
 .btn-primary:hover { background: var(--kr-indigo-hv); }
@@ -271,13 +293,17 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
   background: #EFECFA; color: #A79FC0; box-shadow: none; cursor: not-allowed; transform: none;
 }
 .btn-ghost {
-  display: inline-flex; align-items: center; justify-content: center; width: 100%;
+  display: inline-flex; align-items: center; justify-content: center;
   font-family: var(--kr-sans); font-weight: 700; font-size: .78rem;
   color: var(--kr-indigo); background: var(--kr-lilac-2);
-  border: none; border-radius: 999px; padding: .6rem; min-height: 2.75rem;
+  border: none; border-radius: 999px; padding: .6rem 1.2rem; min-height: 2.75rem;
   cursor: pointer; text-decoration: none;
 }
 .btn-ghost:hover { background: #E7E1FB; }
+
+/* The one place a full-width button actually makes sense: reward cards are a
+   fixed-width grid column, so the action should fill it edge to edge. */
+.reward-body .btn-primary, .reward-body .btn-ghost { width: 100%; }
 
 /* --------------------------------------------------------- Auth / login */
 .auth-card {
@@ -312,10 +338,6 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
   font-weight: 500; color: var(--kr-muted);
 }
 .checkbox input { width: 1.05rem; height: 1.05rem; accent-color: var(--kr-indigo); }
-
-/* Login submit button (form's <button type="submit" class="btn-primary">) sits
-   left-aligned rather than full width in the auth card */
-.auth-card .btn-primary { width: auto; padding-left: 1.6rem; padding-right: 1.6rem; }
 
 /* --------------------------------------------------------- Small screens */
 @media (max-width: 640px) {
