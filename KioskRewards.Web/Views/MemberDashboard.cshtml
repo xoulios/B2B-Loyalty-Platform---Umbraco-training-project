@@ -1,4 +1,5 @@
 @using KioskRewards.Domain.Enums
+@using KioskRewards.Web.Controllers
 @using KioskRewards.Web.Models
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<MemberDashboardViewModel>
 @{
@@ -11,6 +12,24 @@
 <section class="balance-card">
     <span class="balance-label">@Umbraco.GetDictionaryValue("Dashboard.PointsBalanceLabel")</span>
     <span class="balance-value">@Model.Balance</span>
+</section>
+
+<section class="claim-card">
+    <h2>@Umbraco.GetDictionaryValue("Dashboard.ClaimOrderHeading")</h2>
+
+    @if (TempData["ClaimMessage"] is string claimMessage)
+    {
+        <p class="@(TempData["ClaimSuccess"] as bool? == true ? "positive" : "negative")">@claimMessage</p>
+    }
+
+    @using (Html.BeginUmbracoForm<OrderClaimController>(nameof(OrderClaimController.ClaimOrder)))
+    {
+        <div class="field">
+            <label for="code">@Umbraco.GetDictionaryValue("Dashboard.OrderCodeLabel")</label>
+            <input type="text" id="code" name="code" autocomplete="off" />
+        </div>
+        <button type="submit" class="btn-primary">@Umbraco.GetDictionaryValue("Dashboard.ClaimButton")</button>
+    }
 </section>
 
 <h2>@Umbraco.GetDictionaryValue("Dashboard.TransactionHistoryHeading")</h2>

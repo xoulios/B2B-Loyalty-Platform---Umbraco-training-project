@@ -10,6 +10,16 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://localhost:10024"
       }
+    },
+    {
+      "name": "kioskrewards-web-https",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "KioskRewards.Web/KioskRewards.Web.csproj", "--no-build", "--no-launch-profile"],
+      "port": 44315,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://localhost:44315"
+      }
     }
   ]
 }

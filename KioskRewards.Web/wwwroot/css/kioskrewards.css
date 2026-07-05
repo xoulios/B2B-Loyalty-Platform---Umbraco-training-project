@@ -171,6 +171,16 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
   color: var(--kr-indigo); letter-spacing: -.02em; line-height: 1.1;
 }
 
+/* --------------------------------------------------------- Claim order code (dashboard) */
+.claim-card {
+  max-width: 420px;
+  background: var(--kr-surface); border: 2px solid var(--kr-border);
+  border-radius: 20px; padding: 1.25rem 1.5rem; margin: 0 0 2rem;
+  box-shadow: 0 5px 0 var(--kr-shadow);
+}
+.claim-card h2 { margin-top: 0; }
+.claim-card .btn-primary { width: auto; padding-left: 1.6rem; padding-right: 1.6rem; }
+
 /* --------------------------------------------------------- History table */
 /* Optional wrapper <div class="history-wrap"> rounds the corners cleanly. */
 .history-wrap { border: 2px solid var(--kr-border); border-radius: 16px; overflow: hidden; }

@@ -13,6 +13,7 @@ public class LoyaltyDbContext : DbContext
 
     public DbSet<PointsAccount> PointsAccounts => Set<PointsAccount>();
     public DbSet<PointsTransaction> PointsTransactions => Set<PointsTransaction>();
+    public DbSet<OrderCode> OrderCodes => Set<OrderCode>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,8 +21,14 @@ public class LoyaltyDbContext : DbContext
 
         // SQLite has no real rowversion type so we skip it in dev; SQL Server gets the real thing
         if (Database.IsSqlite())
+        {
             modelBuilder.Entity<PointsAccount>().Ignore(a => a.RowVersion);
+            modelBuilder.Entity<OrderCode>().Ignore(o => o.RowVersion);
+        }
         else
+        {
             modelBuilder.Entity<PointsAccount>().Property(a => a.RowVersion).IsRowVersion();
+            modelBuilder.Entity<OrderCode>().Property(o => o.RowVersion).IsRowVersion();
+        }
     }
 }

@@ -24,6 +24,7 @@ public static class InfrastructureServiceRegistration
     {
         services.AddDbContext<LoyaltyDbContext>((sp, options) => options.UseSqlite(connectionStringFactory(sp)));
         services.AddScoped<IPointsService, PointsService>();
+        services.AddScoped<IOrderClaimService, OrderClaimService>();
         services.AddScoped<LoyaltyDataSeeder>();
         return services;
     }
