@@ -63,11 +63,11 @@ public sealed class MemberAuthController : SurfaceController
         // turn the SignInResult into something the user can actually read
         var dictionary = _cultureDictionaryFactory.CreateDictionary();
         if (result.IsLockedOut)
-            ModelState.AddModelError(string.Empty, dictionary["Login.ErrorLockedOut"] ?? "This account is temporarily locked. Please try again later.");
+            ModelState.AddModelError(string.Empty, dictionary.GetValueOrFallback("Login.ErrorLockedOut", "This account is temporarily locked. Please try again later."));
         else if (result.IsNotAllowed)
-            ModelState.AddModelError(string.Empty, dictionary["Login.ErrorNotAllowed"] ?? "This account is not allowed to sign in (check it is approved).");
+            ModelState.AddModelError(string.Empty, dictionary.GetValueOrFallback("Login.ErrorNotAllowed", "This account is not allowed to sign in (check it is approved)."));
         else
-            ModelState.AddModelError(string.Empty, dictionary["Login.ErrorInvalidCredentials"] ?? "Invalid username or password.");
+            ModelState.AddModelError(string.Empty, dictionary.GetValueOrFallback("Login.ErrorInvalidCredentials", "Invalid username or password."));
 
         return CurrentUmbracoPage();
     }

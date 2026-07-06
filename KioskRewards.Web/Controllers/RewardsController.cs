@@ -57,13 +57,13 @@ public sealed class RewardsController : SurfaceController
         if (reward is null)
         {
             TempData["RedeemSuccess"] = false;
-            TempData["RedeemMessage"] = dictionary["Rewards.RedeemNotFound"] ?? "That reward could not be found.";
+            TempData["RedeemMessage"] = dictionary.GetValueOrFallback("Rewards.RedeemNotFound", "That reward could not be found.");
             return RedirectToCurrentUmbracoPage();
         }
 
         var result = await _pointsService.RedeemAsync(member.Key, reward.PointsCost, $"Redeemed: {reward.Title}");
 
-        var redeemSuccessFormat = dictionary["Rewards.RedeemSuccess"] ?? "You redeemed \"{0}\" for {1} points.";
+        var redeemSuccessFormat = dictionary.GetValueOrFallback("Rewards.RedeemSuccess", "You redeemed \"{0}\" for {1} points.");
         TempData["RedeemSuccess"] = result.IsSuccess;
         TempData["RedeemMessage"] = result.IsSuccess
             ? string.Format(redeemSuccessFormat, reward.Title, reward.PointsCost)

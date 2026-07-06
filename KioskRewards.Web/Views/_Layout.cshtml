@@ -32,7 +32,9 @@
         <a class="brand" href="@home.Url()">Kiosk<span>Rewards</span></a>
         <nav>
             <a href="@home.Url()">@home.Name</a>
-            @foreach (var child in home.Children().Where(c => c.ContentType.Alias is not ("loginPage" or "memberDashboard")))
+            @* companyOrdersList is a code-only lookup container (no Template, deliberately unroutable
+               - see docs/PROJECT-CONTEXT.md) - it must never show up as a public nav link. *@
+            @foreach (var child in home.Children().Where(c => c.ContentType.Alias is not ("loginPage" or "memberDashboard" or "companyOrdersList")))
             {
                 <a href="@child.Url()">@child.Name</a>
             }

@@ -62,7 +62,7 @@ public sealed class OrderClaimController : SurfaceController
         if (string.IsNullOrWhiteSpace(code))
         {
             TempData["ClaimSuccess"] = false;
-            TempData["ClaimMessage"] = dictionary["Dashboard.ClaimCodeRequired"] ?? "Please enter an order code.";
+            TempData["ClaimMessage"] = dictionary.GetValueOrFallback("Dashboard.ClaimCodeRequired", "Please enter an order code.");
             return RedirectToCurrentUmbracoPage();
         }
 
@@ -90,7 +90,7 @@ public sealed class OrderClaimController : SurfaceController
             order.PointsValue,
             $"Order code {order.Code}: {order.ProductDescription}");
 
-        var claimSuccessFormat = dictionary["Dashboard.ClaimSuccess"] ?? "You earned {0} points for: {1}";
+        var claimSuccessFormat = dictionary.GetValueOrFallback("Dashboard.ClaimSuccess", "You earned {0} points for: {1}");
         TempData["ClaimSuccess"] = result.IsSuccess;
         TempData["ClaimMessage"] = result.IsSuccess
             ? string.Format(claimSuccessFormat, order.PointsValue, order.ProductDescription)
