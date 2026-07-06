@@ -1,5 +1,7 @@
 using KioskRewards.Application.Abstractions;
+using KioskRewards.Web.Composers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Dictionary;
@@ -49,6 +51,7 @@ public sealed class OrderClaimController : SurfaceController
     }
 
     [HttpPost]
+    [EnableRateLimiting(OrderClaimRateLimiterComposer.PolicyName)]
     [ValidateAntiForgeryToken]          // anti-CSRF token, comes for free from BeginUmbracoForm
     [ValidateUmbracoFormRouteString]    // checks the ufprt token so the POST lands back on this page
     public async Task<IActionResult> ClaimOrder(string code)
