@@ -27,7 +27,7 @@
 </section>
 
 <section class="claim-card">
-    <h2>@Dict("Dashboard.ClaimOrderHeading", "Have an order code?")</h2>
+    <h2>@Dict("Dashboard.OrderCodeQuestion", "Have an order code?")</h2>
 
     @if (TempData["ClaimMessage"] is string claimMessage)
     {
@@ -37,7 +37,7 @@
     @using (Html.BeginUmbracoForm<OrderClaimController>(nameof(OrderClaimController.ClaimOrder)))
     {
         <div class="field">
-            <label for="code">@Dict("Dashboard.OrderCodeLabel", "Order code")</label>
+            <label for="code">@Dict("Dashboard.OrderCode", "Order code")</label>
             <input type="text" id="code" name="code" autocomplete="off" />
         </div>
         <button type="submit" class="btn-primary">@Dict("Dashboard.ClaimButton", "Claim")</button>
