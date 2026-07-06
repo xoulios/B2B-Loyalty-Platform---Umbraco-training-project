@@ -19,16 +19,11 @@ public class LoyaltyDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(LoyaltyDbContext).Assembly);
 
-        // SQLite has no real rowversion type so we skip it in dev; SQL Server gets the real thing
+        // SQLite has no real rowversion type so we skip it in dev; SQL Server gets the real thing.
+        // (Only PointsAccount needs this - OrderCode is insert-only, nothing to race an UPDATE against.)
         if (Database.IsSqlite())
-        {
             modelBuilder.Entity<PointsAccount>().Ignore(a => a.RowVersion);
-            modelBuilder.Entity<OrderCode>().Ignore(o => o.RowVersion);
-        }
         else
-        {
             modelBuilder.Entity<PointsAccount>().Property(a => a.RowVersion).IsRowVersion();
-            modelBuilder.Entity<OrderCode>().Property(o => o.RowVersion).IsRowVersion();
-        }
     }
 }

@@ -1,5 +1,4 @@
 using KioskRewards.Application.Abstractions;
-using KioskRewards.Application.DTOs;
 using KioskRewards.Domain.Common;
 using KioskRewards.Domain.Entities;
 using KioskRewards.Infrastructure.Persistence;
@@ -8,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 namespace KioskRewards.Infrastructure.Services;
 
 /// <summary>
-/// Claiming an order code touches two aggregates - the OrderCode itself (marks it claimed) and the
-/// member's PointsAccount (awards the points). Deliberately does NOT go through IPointsService.EarnAsync
-/// for this: that method does its own SaveChanges, which would mean two separate commits for what is
+/// Claiming an order code touches two aggregates - a new OrderCode claim row gets inserted, and the
+/// member's PointsAccount earns points. Deliberately does NOT go through IPointsService.EarnAsync for
+/// this: that method does its own SaveChanges, which would mean two separate commits for what is
 /// really one business operation. Instead this talks to the domain methods directly (same idiom as
-/// PointsService) so both changes land in a single SaveChangesAsync - a code can never end up marked
-/// claimed without the points actually landing, or vice versa.
+/// PointsService) so both changes land in a single SaveChangesAsync - a claim can never end up
+/// recorded without the points actually landing, or vice versa.
 /// </summary>
 public sealed class OrderClaimService : IOrderClaimService
 {
@@ -21,16 +20,11 @@ public sealed class OrderClaimService : IOrderClaimService
 
     public OrderClaimService(LoyaltyDbContext db) => _db = db;
 
-    public async Task<Result<OrderClaimResultDto>> ClaimAsync(Guid memberKey, string code, CancellationToken ct = default)
+    public async Task<Result> ClaimAsync(Guid memberKey, Guid orderContentKey, int pointsValue, string description, CancellationToken ct = default)
     {
-        var normalizedCode = OrderCode.Normalize(code);
-
-        var order = await _db.OrderCodes.FirstOrDefaultAsync(o => o.Code == normalizedCode, ct);
-        if (order is null)
-            return Result.Failure<OrderClaimResultDto>("That order code was not found.");
-
-        if (order.IsClaimed)
-            return Result.Failure<OrderClaimResultDto>("This order code has already been claimed.");
+        var alreadyClaimed = await _db.OrderCodes.AnyAsync(o => o.ContentKey == orderContentKey, ct);
+        if (alreadyClaimed)
+            return Result.Failure("This order code has already been claimed.");
 
         var now = DateTime.UtcNow;
 
@@ -41,18 +35,19 @@ public sealed class OrderClaimService : IOrderClaimService
             await _db.PointsAccounts.AddAsync(account, ct);
         }
 
-        account.Earn(order.PointsValue, $"Order code {order.Code}: {order.ProductDescription}", now);
-        order.Claim(memberKey, now);
+        account.Earn(pointsValue, description, now);
+        await _db.OrderCodes.AddAsync(OrderCode.CreateClaim(orderContentKey, memberKey, now), ct);
 
         try
         {
-            // one SaveChanges covers both the order-code claim and the points award
+            // one SaveChanges covers both the new claim row and the points award
             await _db.SaveChangesAsync(ct);
-            return Result.Success(new OrderClaimResultDto(order.ProductDescription, order.PointsValue));
+            return Result.Success();
         }
-        catch (DbUpdateConcurrencyException)
+        catch (DbUpdateException)
         {
-            return Result.Failure<OrderClaimResultDto>("Something changed at the same time. Please try again.");
+            // the unique index on ContentKey caught a race: two requests claimed the same code at once
+            return Result.Failure("This order code has already been claimed.");
         }
     }
 }

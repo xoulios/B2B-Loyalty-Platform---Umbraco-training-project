@@ -37,18 +37,8 @@ public sealed class LoyaltyDataSeeder
             await _db.SaveChangesAsync(ct);
         }
 
-        if (!await _db.OrderCodes.AnyAsync(ct))
-        {
-            // TEMP demo codes simulating the company's order system - see docs/PROJECT-CONTEXT.md
-            var codes = new[]
-            {
-                OrderCode.Create("SALE-100PK-CIG", "Order: 100 packs of cigarettes (Sklira)", 250),
-                OrderCode.Create("SALE-50PK-CIG", "Order: 50 packs of cigarettes (Sklira)", 125),
-                OrderCode.Create("SALE-20BX-LIGHTERS", "Order: 20 boxes of lighters", 60),
-            };
-
-            await _db.OrderCodes.AddRangeAsync(codes, ct);
-            await _db.SaveChangesAsync(ct);
-        }
+        // No OrderCode seeding here anymore - the order-code catalog now lives as Umbraco content
+        // ("CompanyOrder" nodes), not EF rows. OrderCode rows only get created when a code is
+        // actually claimed (see OrderClaimService) - see docs/SEED-DATA.md for the demo codes.
     }
 }

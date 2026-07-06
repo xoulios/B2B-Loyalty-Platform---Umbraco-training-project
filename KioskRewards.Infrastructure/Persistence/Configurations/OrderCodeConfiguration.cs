@@ -12,10 +12,10 @@ internal sealed class OrderCodeConfiguration : IEntityTypeConfiguration<OrderCod
 
         builder.HasKey(o => o.Id);   // auto-increment id, nothing fancy
 
-        builder.Property(o => o.Code).IsRequired().HasMaxLength(50);
-        builder.HasIndex(o => o.Code).IsUnique();   // the actual "no double-claiming" guarantee lives here
+        builder.Property(o => o.ContentKey).IsRequired();
+        builder.HasIndex(o => o.ContentKey).IsUnique();   // the actual "no double-claiming" guarantee lives here
 
-        builder.Property(o => o.ProductDescription).IsRequired().HasMaxLength(200);
-        builder.Property(o => o.PointsValue).IsRequired();
+        builder.Property(o => o.ClaimedByMemberKey).IsRequired();
+        builder.Property(o => o.ClaimedUtc).IsRequired();
     }
 }

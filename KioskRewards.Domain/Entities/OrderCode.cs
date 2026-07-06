@@ -1,61 +1,41 @@
-using KioskRewards.Domain.Exceptions;
-
 namespace KioskRewards.Domain.Entities;
 
 /// <summary>
-/// A one-time-claimable code representing a real-world company order (e.g. "100 packs of cigarettes"),
-/// worth a fixed number of points. Simulates the company's own order system, which this practice
-/// project has no real integration point for - see docs/PROJECT-CONTEXT.md.
+/// A record that a specific company order (identified by the Key of its Umbraco "CompanyOrder"
+/// content node) has been claimed by a member for points. The code/description/points themselves
+/// live in Umbraco content, not here - this row's only job is to answer "has this one already been
+/// used": no row for a given ContentKey means "not yet claimed". Insert-only, never updated, so
+/// unlike PointsAccount there's no RowVersion here - there's nothing to race an UPDATE against, only
+/// a duplicate INSERT, which the unique index on ContentKey (see OrderCodeConfiguration) catches.
 /// </summary>
 public class OrderCode
 {
     // EF Core materialisation constructor.
     private OrderCode() { }
 
-    private OrderCode(string code, string productDescription, int pointsValue)
+    private OrderCode(Guid contentKey, Guid memberKey, DateTime claimedUtc)
     {
-        Code = code;
-        ProductDescription = productDescription;
-        PointsValue = pointsValue;
+        ContentKey = contentKey;
+        ClaimedByMemberKey = memberKey;
+        ClaimedUtc = claimedUtc;
     }
 
     public int Id { get; private set; }
 
-    /// Normalized (trimmed, upper-invariant) so kiosk-owner typos in casing still match.
-    public string Code { get; private set; } = string.Empty;
+    /// The Key of the Umbraco "CompanyOrder" content node this claim is for.
+    public Guid ContentKey { get; private set; }
 
-    public string ProductDescription { get; private set; } = string.Empty;
+    public Guid ClaimedByMemberKey { get; private set; }
 
-    public int PointsValue { get; private set; }
+    public DateTime ClaimedUtc { get; private set; }
 
-    /// Null until claimed - the member who redeemed this code for points.
-    public Guid? ClaimedByMemberKey { get; private set; }
-
-    public DateTime? ClaimedUtc { get; private set; }
-
-    /// Optimistic-concurrency token: guards against two claims racing on the same code
-    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
-
-    public bool IsClaimed => ClaimedByMemberKey is not null;
-
-    public static OrderCode Create(string code, string productDescription, int pointsValue)
+    public static OrderCode CreateClaim(Guid contentKey, Guid memberKey, DateTime nowUtc)
     {
-        if (string.IsNullOrWhiteSpace(code))
-            throw new ArgumentException("Order code is required.", nameof(code));
-        if (pointsValue <= 0)
-            throw new ArgumentOutOfRangeException(nameof(pointsValue), "Points value must be positive.");
+        if (contentKey == Guid.Empty)
+            throw new ArgumentException("Content key is required.", nameof(contentKey));
+        if (memberKey == Guid.Empty)
+            throw new ArgumentException("Member key is required.", nameof(memberKey));
 
-        return new OrderCode(Normalize(code), productDescription, pointsValue);
-    }
-
-    public static string Normalize(string code) => code.Trim().ToUpperInvariant();
-
-    public void Claim(Guid memberKey, DateTime nowUtc)
-    {
-        if (IsClaimed)
-            throw new OrderCodeAlreadyClaimedException(Code);
-
-        ClaimedByMemberKey = memberKey;
-        ClaimedUtc = nowUtc;
+        return new OrderCode(contentKey, memberKey, nowUtc);
     }
 }
