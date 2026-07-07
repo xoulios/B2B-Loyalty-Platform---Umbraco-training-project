@@ -34,5 +34,9 @@ public sealed class LoyaltyComposer : IComposer
 
         // gives new kiosk-owner members a loyalty account + welcome bonus automatically
         builder.AddNotificationAsyncHandler<MemberSavedNotification, MemberSavedLoyaltyHandler>();
+
+        // blocks delete/unpublish of a CompanyOrder node that's already been claimed
+        builder.AddNotificationAsyncHandler<ContentDeletingNotification, CompanyOrderIntegrityGuard>();
+        builder.AddNotificationAsyncHandler<ContentUnpublishingNotification, CompanyOrderIntegrityGuard>();
     }
 }

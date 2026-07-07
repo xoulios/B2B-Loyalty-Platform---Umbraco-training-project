@@ -50,4 +50,7 @@ public sealed class OrderClaimService : IOrderClaimService
             return Result.Failure("This order code has already been claimed.");
         }
     }
+
+    public Task<bool> IsClaimedAsync(Guid orderContentKey, CancellationToken ct = default) =>
+        _db.OrderCodes.AnyAsync(o => o.ContentKey == orderContentKey, ct);
 }

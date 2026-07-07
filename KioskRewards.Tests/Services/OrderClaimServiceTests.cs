@@ -72,4 +72,21 @@ public class OrderClaimServiceTests : SqliteTestBase
         var points = new PointsService(Db);
         Assert.Equal(375, await points.GetBalanceAsync(Member));
     }
+
+    [Fact]
+    public async Task IsClaimedAsync_is_false_for_a_content_key_nobody_has_claimed_yet()
+    {
+        var svc = new OrderClaimService(Db);
+
+        Assert.False(await svc.IsClaimedAsync(ContentKey));
+    }
+
+    [Fact]
+    public async Task IsClaimedAsync_is_true_once_that_content_key_has_been_claimed()
+    {
+        var svc = new OrderClaimService(Db);
+        await svc.ClaimAsync(Member, ContentKey, 100, "desc");
+
+        Assert.True(await svc.IsClaimedAsync(ContentKey));
+    }
 }

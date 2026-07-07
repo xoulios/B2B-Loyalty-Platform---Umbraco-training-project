@@ -18,4 +18,11 @@ public interface IOrderClaimService
     /// than throwing.
     /// </summary>
     Task<Result> ClaimAsync(Guid memberKey, Guid orderContentKey, int pointsValue, string description, CancellationToken ct = default);
+
+    /// <summary>
+    /// True if this content node's order code has already been claimed by someone. Used to protect
+    /// a "CompanyOrder" node from being deleted/unpublished once a claim already references its Key
+    /// (see CompanyOrderIntegrityGuard in KioskRewards.Web).
+    /// </summary>
+    Task<bool> IsClaimedAsync(Guid orderContentKey, CancellationToken ct = default);
 }
