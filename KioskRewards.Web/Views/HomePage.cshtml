@@ -7,9 +7,8 @@
 
 <section class="hero">
     <h1>@(string.IsNullOrWhiteSpace(Model.Heading) ? Model.Name : Model.Heading)</h1>
-
-    @if (Model.BodyText is not null)
-    {
-        <div class="body">@Model.BodyText</div>
-    }
 </section>
+
+<div class="body-blocks">
+    @await Html.GetBlockListHtmlAsync(Model.BodyBlocks)
+</div>

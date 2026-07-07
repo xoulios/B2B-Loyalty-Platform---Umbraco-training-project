@@ -1,0 +1,18 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem<CalloutBlock>>
+@{
+    var block = Model.Content;
+}
+<div class="content-block callout-block">
+    @if (!string.IsNullOrWhiteSpace(block.Title))
+    {
+        <h2>@block.Title</h2>
+    }
+    @if (!string.IsNullOrWhiteSpace(block.Text))
+    {
+        <p>@block.Text</p>
+    }
+    @if (!string.IsNullOrWhiteSpace(block.ButtonText) && !string.IsNullOrWhiteSpace(block.ButtonUrl))
+    {
+        <a class="btn-primary" href="@block.ButtonUrl">@block.ButtonText</a>
+    }
+</div>

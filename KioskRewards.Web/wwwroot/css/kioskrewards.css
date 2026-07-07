@@ -339,6 +339,23 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
 }
 .checkbox input { width: 1.05rem; height: 1.05rem; accent-color: var(--kr-indigo); }
 
+/* --------------------------------------------------------- Home body blocks (Block List) */
+/* HomePage.cshtml wraps Html.GetBlockListHtmlAsync(Model.BodyBlocks) in <div class="body-blocks">.
+   Each block partial (Views/Partials/BlockList/Components/) renders <div class="content-block ...">. */
+.body-blocks { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1rem; }
+
+.text-block h2 { margin-top: 0; }
+.text-block .body { font-size: 1.05rem; color: var(--kr-muted); max-width: 62ch; }
+.text-block .body p { margin: 0 0 1rem; }
+
+.callout-block {
+  max-width: 480px;
+  background: var(--kr-surface); border: 2px solid var(--kr-border);
+  border-radius: 20px; padding: 1.5rem 1.75rem; box-shadow: 0 5px 0 var(--kr-shadow);
+}
+.callout-block h2 { margin-top: 0; }
+.callout-block p { color: var(--kr-muted); margin: 0 0 1.1rem; }
+
 /* --------------------------------------------------------- Small screens */
 @media (max-width: 640px) {
   header.site { padding: .7rem 1rem; }
