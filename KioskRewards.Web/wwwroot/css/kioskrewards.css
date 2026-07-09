@@ -356,6 +356,20 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
 .callout-block h2 { margin-top: 0; }
 .callout-block p { color: var(--kr-muted); margin: 0 0 1.1rem; }
 
+/* --------------------------------------------------------- Contact info blocks (Block List) */
+/* ContentPage.cshtml wraps Html.GetBlockListHtmlAsync(Model.ContactInfoBlocks) in
+   <div class="contact-info-blocks">. Each contactInfoBlock renders a small label/detail row. */
+.contact-info-blocks .umb-block-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+
+.contact-info-block {
+  display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
+  padding: 0.9rem 1.25rem;
+  background: var(--kr-surface); border: 2px solid var(--kr-border);
+  border-radius: 14px; box-shadow: 0 3px 0 var(--kr-shadow);
+}
+.contact-info-block .label { font-weight: 700; color: var(--kr-indigo); min-width: 8ch; }
+.contact-info-block .detail { color: var(--kr-ink); }
+
 /* --------------------------------------------------------- Small screens */
 @media (max-width: 640px) {
   header.site { padding: .7rem 1rem; }

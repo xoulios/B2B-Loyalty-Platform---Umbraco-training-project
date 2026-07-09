@@ -1,0 +1,14 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem<ContactInfoBlock>>
+@{
+    var block = Model.Content;
+}
+<div class="contact-info-block">
+    @if (!string.IsNullOrWhiteSpace(block.Label))
+    {
+        <span class="label">@block.Label</span>
+    }
+    @if (!string.IsNullOrWhiteSpace(block.Detail))
+    {
+        <span class="detail">@block.Detail</span>
+    }
+</div>

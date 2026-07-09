@@ -12,4 +12,8 @@
     {
         <div class="body">@Model.BodyText</div>
     }
+
+    <div class="contact-info-blocks">
+        @await Html.GetBlockListHtmlAsync(Model.ContactInfoBlocks)
+    </div>
 </article>
