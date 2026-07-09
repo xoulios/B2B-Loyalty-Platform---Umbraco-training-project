@@ -9,6 +9,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.1.0" />
     <PackageReference Include="Umbraco.Cms" Version="17.*" />
   </ItemGroup>
 
