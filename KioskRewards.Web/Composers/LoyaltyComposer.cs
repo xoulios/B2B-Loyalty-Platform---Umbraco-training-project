@@ -1,3 +1,4 @@
+using KioskRewards.Application.Configuration;
 using KioskRewards.Infrastructure.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,8 @@ public sealed class LoyaltyComposer : IComposer
 {
     public void Compose(IUmbracoBuilder builder)
     {
+        builder.Services.Configure<LoyaltyOptions>(builder.Config.GetSection(LoyaltyOptions.SectionName));
+
         var rawConnectionString = builder.Config.GetConnectionString("LoyaltyDb")
             ?? "Data Source=|DataDirectory|/loyalty.sqlite.db;Cache=Shared;Foreign Keys=True;Pooling=True";
 

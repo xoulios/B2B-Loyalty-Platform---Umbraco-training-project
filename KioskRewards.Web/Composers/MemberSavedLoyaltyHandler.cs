@@ -1,6 +1,8 @@
 using KioskRewards.Application.Abstractions;
+using KioskRewards.Application.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Web.Common.PublishedModels;
@@ -14,15 +16,18 @@ namespace KioskRewards.Web.Composers;
 /// </summary>
 public sealed class MemberSavedLoyaltyHandler : INotificationAsyncHandler<MemberSavedNotification>
 {
-    private const int WelcomeBonus = 100;
-
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<MemberSavedLoyaltyHandler> _logger;
+    private readonly int _welcomeBonus;
 
-    public MemberSavedLoyaltyHandler(IServiceScopeFactory scopeFactory, ILogger<MemberSavedLoyaltyHandler> logger)
+    public MemberSavedLoyaltyHandler(
+        IServiceScopeFactory scopeFactory,
+        ILogger<MemberSavedLoyaltyHandler> logger,
+        IOptions<LoyaltyOptions> loyaltyOptions)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
+        _welcomeBonus = loyaltyOptions.Value.WelcomeBonusPoints;
     }
 
     public async Task HandleAsync(MemberSavedNotification notification, CancellationToken cancellationToken)
@@ -41,9 +46,9 @@ public sealed class MemberSavedLoyaltyHandler : INotificationAsyncHandler<Member
             if (history.Count > 0)
                 continue;   // already has an account, nothing to do here
 
-            var result = await points.EarnAsync(member.Key, WelcomeBonus, "Welcome bonus", cancellationToken);
+            var result = await points.EarnAsync(member.Key, _welcomeBonus, "Welcome bonus", cancellationToken);
             if (result.IsSuccess)
-                _logger.LogInformation("Provisioned loyalty account for member {MemberKey} with {Points} welcome points.", member.Key, WelcomeBonus);
+                _logger.LogInformation("Provisioned loyalty account for member {MemberKey} with {Points} welcome points.", member.Key, _welcomeBonus);
             else
                 _logger.LogWarning("Failed to provision loyalty account for member {MemberKey}: {Error}", member.Key, result.Error);
         }
