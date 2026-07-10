@@ -126,7 +126,7 @@ nav form { display: inline; margin: 0; }
 /* ------------------------------------------------------------- Layout body */
 /* flex:1 makes main claim all leftover vertical space in the body column, which
    is what actually shoves the footer down to the bottom of the viewport. */
-main { flex: 1 0 auto; width: 100%; max-width: 960px; margin: 0 auto; padding: 2.25rem 1.5rem 3rem; }
+main { flex: 1 0 auto; width: 100%; max-width: 800px; margin: 0 auto; padding: 2.25rem 1.5rem 3rem; }
 
 header.site, footer.site { flex: none; }
 
@@ -141,7 +141,7 @@ h2 { font-size: 1.15rem; margin: 1.4em 0 .6em; }
 
 /* Home hero + content article share the same simple rhythm */
 .hero h1 { font-size: clamp(1.9rem, 1rem + 3.4vw, 2.7rem); }
-.hero .body, article .body { font-size: 1.05rem; color: var(--kr-muted); max-width: 62ch; }
+.hero .body, article .body { font-size: 1.05rem; color: var(--kr-muted); }
 .hero .body p, article .body p { margin: 0 0 1rem; }
 
 /* --------------------------------------------------------- Message banners */
@@ -349,7 +349,6 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
 .text-block .body p { margin: 0 0 1rem; }
 
 .callout-block {
-  max-width: 480px;
   background: var(--kr-surface); border: 2px solid var(--kr-border);
   border-radius: 20px; padding: 1.5rem 1.75rem; box-shadow: 0 5px 0 var(--kr-shadow);
 }
