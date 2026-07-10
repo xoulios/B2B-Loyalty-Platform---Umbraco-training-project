@@ -32,13 +32,13 @@ public sealed class ExceptionHandlingMiddleware
         catch (DomainException ex)
         {
             _logger.LogWarning(ex, "Domain rule violation handling {Method} {Path}",
-                context.Request.Method, context.Request.Path);
+                Sanitize(context.Request.Method), Sanitize(context.Request.Path.ToString()));
             Redirect(context);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception handling {Method} {Path}",
-                context.Request.Method, context.Request.Path);
+                Sanitize(context.Request.Method), Sanitize(context.Request.Path.ToString()));
             Redirect(context);
         }
     }
@@ -51,4 +51,10 @@ public sealed class ExceptionHandlingMiddleware
         context.Response.Clear();
         context.Response.Redirect(ErrorPath);
     }
+
+    /// <summary>
+    /// Strips CR/LF from user-controlled request data before it reaches the logger, so a crafted
+    /// method/path can't forge extra log lines (CodeQL cs/log-forging).
+    /// </summary>
+    private static string Sanitize(string value) => value.Replace('\r', '_').Replace('\n', '_');
 }
