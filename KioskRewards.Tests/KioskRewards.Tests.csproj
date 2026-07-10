@@ -23,6 +23,7 @@
     <ProjectReference Include="..\KioskRewards.Domain\KioskRewards.Domain.csproj" />
     <ProjectReference Include="..\KioskRewards.Application\KioskRewards.Application.csproj" />
     <ProjectReference Include="..\KioskRewards.Infrastructure\KioskRewards.Infrastructure.csproj" />
+    <ProjectReference Include="..\KioskRewards.Web\KioskRewards.Web.csproj" />
   </ItemGroup>
 
 </Project>

@@ -47,6 +47,9 @@ public sealed class RewardsController : SurfaceController
     [ValidateUmbracoFormRouteString]    // checks the ufprt token so the POST lands back on this page
     public async Task<IActionResult> Redeem(Guid rewardKey)
     {
+        if (!ModelState.IsValid)
+            return CurrentUmbracoPage();
+
         var member = await _memberManager.GetCurrentMemberAsync();
         if (member is null)
             return Unauthorized(); // shouldn't really happen, Public Access already keeps anonymous users out
