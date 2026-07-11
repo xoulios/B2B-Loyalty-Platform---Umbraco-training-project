@@ -1,0 +1,89 @@
+@using KioskRewards.Web.Models
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<CompanyReportViewModel>
+@{
+    Layout = "~/Views/_Layout.cshtml";
+    ViewData["Title"] = Model.Name;
+    var report = Model.Report;
+}
+
+@* Internal, Company Admin-only page - labels are plain English on purpose, same as the domain-layer
+   messages elsewhere in the app; not customer-facing marketing copy, so no Dictionary items. *@
+
+<h1>@Model.Name</h1>
+
+<div class="report-stats">
+    <div class="report-stat">
+        <span class="report-stat-label">Total points earned</span>
+        <span class="report-stat-value">@report.TotalPointsEarned</span>
+    </div>
+    <div class="report-stat">
+        <span class="report-stat-label">Total points redeemed</span>
+        <span class="report-stat-value">@report.TotalPointsRedeemed</span>
+    </div>
+    <div class="report-stat">
+        <span class="report-stat-label">Net points outstanding</span>
+        <span class="report-stat-value">@report.NetPointsOutstanding</span>
+    </div>
+</div>
+
+<a class="btn-ghost" href="?format=csv">Export CSV</a>
+
+<h2>Top rewards</h2>
+@if (report.TopRewards.Count == 0)
+{
+    <p>No redemptions yet.</p>
+}
+else
+{
+    <div class="history-wrap">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Reward</th>
+                    <th>Redemptions</th>
+                    <th>Points spent</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reward in report.TopRewards)
+                {
+                    <tr>
+                        <td>@reward.Description</td>
+                        <td>@reward.RedemptionCount</td>
+                        <td>@reward.TotalPointsSpent</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<h2>Top kiosks</h2>
+@if (report.TopKiosks.Count == 0)
+{
+    <p>No activity yet.</p>
+}
+else
+{
+    <div class="history-wrap">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Kiosk</th>
+                    <th>Points earned</th>
+                    <th>Points redeemed</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var kiosk in report.TopKiosks)
+                {
+                    <tr>
+                        <td>@Model.KioskNames.GetValueOrDefault(kiosk.MemberKey, kiosk.MemberKey.ToString())</td>
+                        <td class="positive">+@kiosk.TotalPointsEarned</td>
+                        <td class="negative">-@kiosk.TotalPointsRedeemed</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

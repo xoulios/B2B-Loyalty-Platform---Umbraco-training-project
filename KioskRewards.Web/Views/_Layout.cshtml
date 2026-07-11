@@ -33,8 +33,10 @@
         <nav>
             <a href="@home.Url()">@home.Name</a>
             @* companyOrdersList is a code-only lookup container (no Template, deliberately unroutable
-               - see docs/PROJECT-CONTEXT.md) - it must never show up as a public nav link. *@
-            @foreach (var child in home.Children().Where(c => c.ContentType.Alias is not ("loginPage" or "memberDashboard" or "companyOrdersList")))
+               - see docs/PROJECT-CONTEXT.md) - it must never show up as a public nav link.
+               companyReport is Public Access-restricted to the "Company Admin" group, same reasoning
+               as memberDashboard - not a link for anonymous/regular kiosk-owner visitors. *@
+            @foreach (var child in home.Children().Where(c => c.ContentType.Alias is not ("loginPage" or "memberDashboard" or "companyOrdersList" or "companyReport")))
             {
                 <a href="@child.Url()">@child.Name</a>
             }

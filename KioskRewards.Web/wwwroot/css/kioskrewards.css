@@ -369,6 +369,23 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
 .contact-info-block .label { font-weight: 700; color: var(--kr-indigo); min-width: 8ch; }
 .contact-info-block .detail { color: var(--kr-ink); }
 
+/* --------------------------------------------------------- Company report (Company Admin only) */
+.report-stats { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0 1.5rem; }
+.report-stat {
+  background: var(--kr-surface); border: 2px solid var(--kr-border);
+  border-radius: 16px; padding: .9rem 1.4rem;
+  box-shadow: 0 4px 0 var(--kr-shadow);
+}
+.report-stat-label {
+  display: block; color: var(--kr-faint); font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.report-stat-value {
+  display: block; font-family: var(--kr-display); font-weight: 800; font-size: 1.8rem;
+  color: var(--kr-indigo); letter-spacing: -.02em;
+}
+h2 + .history-wrap, .report-stats + a.btn-ghost { margin-bottom: 1.5rem; }
+
 /* --------------------------------------------------------- Small screens */
 @media (max-width: 640px) {
   header.site { padding: .7rem 1rem; }
