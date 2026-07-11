@@ -9,12 +9,20 @@
     var home = Model.AncestorOrSelf(1);
     var dashboardUrl = home.DescendantsOrSelf<MemberDashboard>().FirstOrDefault()?.Url() ?? "/dashboard/";
     var loginUrl = home.DescendantsOrSelf<LoginPage>().FirstOrDefault()?.Url() ?? "/login/";
+    var companyReportUrl = home.DescendantsOrSelf<CompanyReport>().FirstOrDefault()?.Url();
 }
 
 @if (MemberManager.IsLoggedIn())
 {
     var member = await MemberManager.GetCurrentMemberAsync();
+    // Same check Public Access itself uses under the hood - "is the current signed-in member in this
+    // Member Group", without needing to load/pass a member object explicitly.
+    var isCompanyAdmin = await MemberManager.IsMemberAuthorizedAsync(null, new[] { "Company Admin" });
     <a href="@dashboardUrl">@Umbraco.GetDictionaryValue("Header.MyDashboard")</a>
+    @if (isCompanyAdmin && !string.IsNullOrWhiteSpace(companyReportUrl) && companyReportUrl != "#")
+    {
+        <a href="@companyReportUrl">Company report</a>
+    }
     <span class="member-name">@Umbraco.GetDictionaryValue("Header.Greeting"), @(member?.Name ?? member?.UserName)</span>
     @using (Html.BeginUmbracoForm<MemberAuthController>(nameof(MemberAuthController.Logout)))
     {
