@@ -201,6 +201,7 @@ p.negative { background: var(--kr-redeem-bg); border: 2px solid var(--kr-redeem-
 /* --------------------------------------------------------- History table */
 /* Optional wrapper <div class="history-wrap"> rounds the corners cleanly. */
 .history-wrap { border: 2px solid var(--kr-border); border-radius: 16px; overflow: hidden; }
+.pager { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; color: var(--kr-faint); font-size: .85rem; }
 .history-table { width: 100%; border-collapse: collapse; }
 .history-table thead th {
   background: #F7F5FF; text-align: left; padding: .7rem .75rem;

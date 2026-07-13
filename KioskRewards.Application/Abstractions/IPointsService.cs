@@ -12,8 +12,8 @@ public interface IPointsService
     /// Current balance, or 0 if they don't have an account yet
     Task<int> GetBalanceAsync(Guid memberKey, CancellationToken ct = default);
 
-    /// Transaction history, newest first
-    Task<IReadOnlyList<PointsTransactionDto>> GetHistoryAsync(Guid memberKey, CancellationToken ct = default);
+    /// Transaction history, newest first, one page at a time
+    Task<PagedResult<PointsTransactionDto>> GetHistoryAsync(Guid memberKey, PagedQuery query, CancellationToken ct = default);
 
     /// <summary>
     /// Hands out points, creating the account if this is the member's first time earning.

@@ -1,4 +1,5 @@
 using KioskRewards.Application.Abstractions;
+using KioskRewards.Domain.Common;
 using KioskRewards.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -52,8 +53,10 @@ public sealed class MemberDashboardController : RenderController
             return Unauthorized();
         }
 
+        var page = int.TryParse(Request.Query["page"], out var requestedPage) && requestedPage > 0 ? requestedPage : 1;
+
         var balance = await _pointsService.GetBalanceAsync(member.Key);
-        var history = await _pointsService.GetHistoryAsync(member.Key);
+        var history = await _pointsService.GetHistoryAsync(member.Key, new PagedQuery(page));
 
         var fallback = new PublishedValueFallback(_serviceContext, _variationContextAccessor);
         var model = new MemberDashboardViewModel(CurrentPage!, fallback) { Balance = balance, History = history };

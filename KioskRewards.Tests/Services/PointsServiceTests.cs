@@ -1,3 +1,4 @@
+using KioskRewards.Domain.Common;
 using KioskRewards.Domain.Enums;
 using KioskRewards.Infrastructure.Services;
 
@@ -43,11 +44,11 @@ public class PointsServiceTests : SqliteTestBase
         Assert.True(result.IsSuccess);
         Assert.Equal(120, await svc.GetBalanceAsync(Member));
 
-        var history = await svc.GetHistoryAsync(Member);
-        Assert.Equal(2, history.Count);
-        Assert.Equal(TransactionType.Redeem, history[0].Type);   // newest first
-        Assert.Equal(80, history[0].Amount);
-        Assert.Equal("Coffee mug", history[0].Description);
+        var history = await svc.GetHistoryAsync(Member, new PagedQuery());
+        Assert.Equal(2, history.TotalCount);
+        Assert.Equal(TransactionType.Redeem, history.Items[0].Type);   // newest first
+        Assert.Equal(80, history.Items[0].Amount);
+        Assert.Equal("Coffee mug", history.Items[0].Description);
     }
 
     [Fact]
@@ -71,7 +72,7 @@ public class PointsServiceTests : SqliteTestBase
 
         Assert.True(result.IsFailure);
         Assert.Equal(30, await svc.GetBalanceAsync(Member));
-        Assert.Single(await svc.GetHistoryAsync(Member));   // no redeem entry written
+        Assert.Equal(1, (await svc.GetHistoryAsync(Member, new PagedQuery())).TotalCount);   // no redeem entry written
     }
 
     [Fact]
@@ -85,10 +86,34 @@ public class PointsServiceTests : SqliteTestBase
         // ...then read it back with a totally new context on the same db
         using var ctx = NewContext();
         var reader = new PointsService(ctx);
-        var history = await reader.GetHistoryAsync(Member);
+        var history = await reader.GetHistoryAsync(Member, new PagedQuery());
 
-        Assert.Equal(2, history.Count);
-        Assert.Equal("second", history[0].Description);
-        Assert.Equal("first", history[1].Description);
+        Assert.Equal(2, history.TotalCount);
+        Assert.Equal("second", history.Items[0].Description);
+        Assert.Equal("first", history.Items[1].Description);
+    }
+
+    [Fact]
+    public async Task GetHistoryAsync_slices_into_pages_and_reports_correct_metadata()
+    {
+        var svc = new PointsService(Db);
+        await svc.EarnAsync(Member, 10, "first");
+        await svc.EarnAsync(Member, 20, "second");
+        await svc.EarnAsync(Member, 30, "third");   // newest
+
+        var page1 = await svc.GetHistoryAsync(Member, new PagedQuery(Page: 1, PageSize: 2));
+        Assert.Equal(2, page1.Items.Count);
+        Assert.Equal(3, page1.TotalCount);
+        Assert.Equal(2, page1.TotalPages);
+        Assert.True(page1.HasNextPage);
+        Assert.False(page1.HasPreviousPage);
+        Assert.Equal("third", page1.Items[0].Description);   // still newest first
+        Assert.Equal("second", page1.Items[1].Description);
+
+        var page2 = await svc.GetHistoryAsync(Member, new PagedQuery(Page: 2, PageSize: 2));
+        Assert.Single(page2.Items);
+        Assert.Equal("first", page2.Items[0].Description);
+        Assert.False(page2.HasNextPage);
+        Assert.True(page2.HasPreviousPage);
     }
 }

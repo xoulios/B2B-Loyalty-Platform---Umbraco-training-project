@@ -1,5 +1,6 @@
 using KioskRewards.Application.Abstractions;
 using KioskRewards.Application.Configuration;
+using KioskRewards.Domain.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -42,8 +43,10 @@ public sealed class MemberSavedLoyaltyHandler : INotificationAsyncHandler<Member
             if (!string.Equals(member.ContentType.Alias, KioskOwner.ModelTypeAlias, StringComparison.OrdinalIgnoreCase))
                 continue;
 
-            var history = await points.GetHistoryAsync(member.Key, cancellationToken);
-            if (history.Count > 0)
+            // Only need to know whether ANY history exists, so ask for the smallest possible page
+            // instead of loading the whole ledger just to check.
+            var history = await points.GetHistoryAsync(member.Key, new PagedQuery(Page: 1, PageSize: 1), cancellationToken);
+            if (history.TotalCount > 0)
                 continue;   // already has an account, nothing to do here
 
             var result = await points.EarnAsync(member.Key, _welcomeBonus, "Welcome bonus", cancellationToken);

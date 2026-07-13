@@ -1,3 +1,4 @@
+using KioskRewards.Domain.Common;
 using KioskRewards.Infrastructure.Services;
 
 namespace KioskRewards.Tests.Services;
@@ -24,9 +25,9 @@ public class OrderClaimServiceTests : SqliteTestBase
         Assert.True(result.IsSuccess);
         Assert.Equal(250, await points.GetBalanceAsync(Member));
 
-        var history = await points.GetHistoryAsync(Member);
-        Assert.Single(history);
-        Assert.Contains("SALE-100PK-CIG", history[0].Description);
+        var history = await points.GetHistoryAsync(Member, new PagedQuery());
+        Assert.Equal(1, history.TotalCount);
+        Assert.Contains("SALE-100PK-CIG", history.Items[0].Description);
     }
 
     [Fact]

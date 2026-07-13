@@ -1,4 +1,5 @@
 using KioskRewards.Application.DTOs;
+using KioskRewards.Domain.Common;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Web.Common.PublishedModels;
@@ -19,5 +20,12 @@ public sealed class MemberDashboardViewModel : MemberDashboard
     }
 
     public int Balance { get; init; }
-    public IReadOnlyList<PointsTransactionDto> History { get; init; } = Array.Empty<PointsTransactionDto>();
+
+    public PagedResult<PointsTransactionDto> History { get; init; } = new()
+    {
+        Items = Array.Empty<PointsTransactionDto>(),
+        Page = 1,
+        PageSize = 10,
+        TotalCount = 0
+    };
 }

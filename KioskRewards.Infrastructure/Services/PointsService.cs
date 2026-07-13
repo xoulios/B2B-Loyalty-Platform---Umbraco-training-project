@@ -2,6 +2,7 @@ using KioskRewards.Application.Abstractions;
 using KioskRewards.Application.DTOs;
 using KioskRewards.Domain.Common;
 using KioskRewards.Domain.Entities;
+using KioskRewards.Infrastructure.Common;
 using KioskRewards.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +27,7 @@ public sealed class PointsService : IPointsService
         return account?.Balance ?? 0;
     }
 
-    public async Task<IReadOnlyList<PointsTransactionDto>> GetHistoryAsync(Guid memberKey, CancellationToken ct = default)
+    public async Task<PagedResult<PointsTransactionDto>> GetHistoryAsync(Guid memberKey, PagedQuery query, CancellationToken ct = default)
     {
         return await _db.PointsTransactions
             .AsNoTracking()
@@ -34,7 +35,7 @@ public sealed class PointsService : IPointsService
             .OrderByDescending(t => t.CreatedUtc)
             .ThenByDescending(t => t.Id)
             .Select(t => new PointsTransactionDto(t.Amount, t.Type, t.Description, t.CreatedUtc))
-            .ToListAsync(ct);
+            .ToPagedResultAsync(query, ct);
     }
 
     public async Task<Result> EarnAsync(Guid memberKey, int amount, string description, CancellationToken ct = default)

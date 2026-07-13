@@ -46,7 +46,7 @@
 
 <h2>@Umbraco.GetDictionaryValue("Dashboard.TransactionHistoryHeading")</h2>
 
-@if (Model.History.Count == 0)
+@if (Model.History.TotalCount == 0)
 {
     <p>@Umbraco.GetDictionaryValue("Dashboard.NoTransactionsYet")</p>
 }
@@ -63,7 +63,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var tx in Model.History)
+                @foreach (var tx in Model.History.Items)
                 {
                     var isRedeem = tx.Type == TransactionType.Redeem;
                     <tr>
@@ -80,4 +80,19 @@ else
             </tbody>
         </table>
     </div>
+
+    if (Model.History.TotalPages > 1)
+    {
+        <div class="pager">
+            @if (Model.History.HasPreviousPage)
+            {
+                <a class="btn-ghost" href="@Model.Url()?page=@(Model.History.Page - 1)">@Dict("Dashboard.PreviousPage", "Previous")</a>
+            }
+            <span>@Model.History.Page / @Model.History.TotalPages</span>
+            @if (Model.History.HasNextPage)
+            {
+                <a class="btn-ghost" href="@Model.Url()?page=@(Model.History.Page + 1)">@Dict("Dashboard.NextPage", "Next")</a>
+            }
+        </div>
+    }
 }
