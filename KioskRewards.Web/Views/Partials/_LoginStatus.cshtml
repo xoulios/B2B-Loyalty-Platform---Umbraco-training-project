@@ -16,12 +16,14 @@
 {
     var member = await MemberManager.GetCurrentMemberAsync();
     // Same check Public Access itself uses under the hood - "is the current signed-in member in this
-    // Member Group", without needing to load/pass a member object explicitly.
-    var isCompanyAdmin = await MemberManager.IsMemberAuthorizedAsync(null, new[] { "Company Admin" });
+    // Member Group", without needing to load/pass a member object explicitly. Only Kiosk Owners (not
+    // the "Kiosk Staff" employee tier) get the report link - it's their own store's data either way,
+    // but staff don't need/get it, same access split as the backing Public Access restriction.
+    var isKioskOwner = await MemberManager.IsMemberAuthorizedAsync(null, new[] { "Kiosk Owners" });
     <a href="@dashboardUrl">@Umbraco.GetDictionaryValue("Header.MyDashboard")</a>
-    @if (isCompanyAdmin && !string.IsNullOrWhiteSpace(companyReportUrl) && companyReportUrl != "#")
+    @if (isKioskOwner && !string.IsNullOrWhiteSpace(companyReportUrl) && companyReportUrl != "#")
     {
-        <a href="@companyReportUrl">Company report</a>
+        <a href="@companyReportUrl">@Umbraco.GetDictionaryValue("Header.CompanyReport")</a>
     }
     <span class="member-name">@Umbraco.GetDictionaryValue("Header.Greeting"), @(member?.Name ?? member?.UserName)</span>
     @using (Html.BeginUmbracoForm<MemberAuthController>(nameof(MemberAuthController.Logout)))

@@ -6,8 +6,10 @@
     var report = Model.Report;
 }
 
-@* Internal, Company Admin-only page - labels are plain English on purpose, same as the domain-layer
-   messages elsewhere in the app; not customer-facing marketing copy, so no Dictionary items. *@
+@* Kiosk Owner-only page (Public Access), scoped to their own account - never another kiosk's data.
+   Labels are plain English on purpose, same as the domain-layer messages elsewhere in the app; this
+   page's internal stats aren't customer-facing marketing copy, so no Dictionary items (the nav link
+   that points here IS dictionary-driven, see _LoginStatus.cshtml). *@
 
 <h1>@Model.Name</h1>
 
@@ -51,36 +53,6 @@ else
                         <td>@reward.Description</td>
                         <td>@reward.RedemptionCount</td>
                         <td>@reward.TotalPointsSpent</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
-
-<h2>Top kiosks</h2>
-@if (report.TopKiosks.Count == 0)
-{
-    <p>No activity yet.</p>
-}
-else
-{
-    <div class="history-wrap">
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>Kiosk</th>
-                    <th>Points earned</th>
-                    <th>Points redeemed</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var kiosk in report.TopKiosks)
-                {
-                    <tr>
-                        <td>@Model.KioskNames.GetValueOrDefault(kiosk.MemberKey, kiosk.MemberKey.ToString())</td>
-                        <td class="positive">+@kiosk.TotalPointsEarned</td>
-                        <td class="negative">-@kiosk.TotalPointsRedeemed</td>
                     </tr>
                 }
             </tbody>

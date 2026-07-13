@@ -19,7 +19,4 @@ public sealed class CompanyReportViewModel : CompanyReport
     }
 
     public CompanyReportDto Report { get; init; } = null!;
-
-    /// MemberKey -> display name, resolved in the Web layer (Application/Infrastructure stay Umbraco-agnostic)
-    public IReadOnlyDictionary<Guid, string> KioskNames { get; init; } = new Dictionary<Guid, string>();
 }

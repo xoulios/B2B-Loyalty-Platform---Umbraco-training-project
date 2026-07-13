@@ -3,11 +3,11 @@ using KioskRewards.Application.DTOs;
 namespace KioskRewards.Application.Abstractions;
 
 /// <summary>
-/// Company-wide loyalty stats, for the "Company Admin" reporting page - separate from IPointsService,
-/// which only ever answers questions about a single member.
+/// A kiosk owner's own loyalty report - separate from IPointsService's raw balance/history, this
+/// summarizes/ranks their own activity (e.g. top redeemed rewards). Always scoped to one MemberKey.
 /// </summary>
 public interface IReportingService
 {
-    /// <param name="topCount">How many entries to return in the TopRewards/TopKiosks lists.</param>
-    Task<CompanyReportDto> GetReportAsync(int topCount = 5, CancellationToken ct = default);
+    /// <param name="topCount">How many entries to return in the TopRewards list.</param>
+    Task<CompanyReportDto> GetReportAsync(Guid memberKey, int topCount = 5, CancellationToken ct = default);
 }
