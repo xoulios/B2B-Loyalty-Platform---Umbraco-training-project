@@ -4,36 +4,47 @@
     Layout = "~/Views/_Layout.cshtml";
     ViewData["Title"] = Model.Name;
     var report = Model.Report;
+
+    // Same "" -> fallback pattern as MemberDashboard.cshtml (gotcha #22): GetDictionaryValue
+    // returns "" (not null) for a key that doesn't exist yet in the backoffice, so a plain lookup
+    // would silently render blank labels instead of the English fallback.
+    string Dict(string key, string fallback)
+    {
+        var value = Umbraco.GetDictionaryValue(key);
+        return string.IsNullOrEmpty(value) ? fallback : value;
+    }
 }
 
 @* Kiosk Owner-only page (Public Access), scoped to their own account - never another kiosk's data.
-   Labels are plain English on purpose, same as the domain-layer messages elsewhere in the app; this
-   page's internal stats aren't customer-facing marketing copy, so no Dictionary items (the nav link
-   that points here IS dictionary-driven, see _LoginStatus.cshtml). *@
+   Labels are Dictionary-driven (CompanyReport.* keys). The "Redeemed: X" text inside report.TopRewards
+   is NOT a label - it's a frozen string written once into the PointsTransaction ledger at redemption
+   time (RewardsController.Redeem) and reused as the reporting group-by key, so it deliberately stays
+   whatever it was when each redemption happened (English prefix + whichever culture the reward title
+   had at that moment) rather than being re-translated here. *@
 
 <h1>@Model.Name</h1>
 
 <div class="report-stats">
     <div class="report-stat">
-        <span class="report-stat-label">Total points earned</span>
+        <span class="report-stat-label">@Dict("CompanyReport.TotalEarnedLabel", "Total points earned")</span>
         <span class="report-stat-value">@report.TotalPointsEarned</span>
     </div>
     <div class="report-stat">
-        <span class="report-stat-label">Total points redeemed</span>
+        <span class="report-stat-label">@Dict("CompanyReport.TotalRedeemedLabel", "Total points redeemed")</span>
         <span class="report-stat-value">@report.TotalPointsRedeemed</span>
     </div>
     <div class="report-stat">
-        <span class="report-stat-label">Net points outstanding</span>
+        <span class="report-stat-label">@Dict("CompanyReport.NetOutstandingLabel", "Net points outstanding")</span>
         <span class="report-stat-value">@report.NetPointsOutstanding</span>
     </div>
 </div>
 
-<a class="btn-ghost" href="?format=csv">Export CSV</a>
+<a class="btn-ghost" href="?format=csv">@Dict("CompanyReport.ExportCsv", "Export CSV")</a>
 
-<h2>Top rewards</h2>
+<h2>@Dict("CompanyReport.TopRewardsHeading", "Top rewards")</h2>
 @if (report.TopRewards.Count == 0)
 {
-    <p>No redemptions yet.</p>
+    <p>@Dict("CompanyReport.NoRedemptionsYet", "No redemptions yet.")</p>
 }
 else
 {
@@ -41,9 +52,9 @@ else
         <table class="history-table">
             <thead>
                 <tr>
-                    <th>Reward</th>
-                    <th>Redemptions</th>
-                    <th>Points spent</th>
+                    <th>@Dict("CompanyReport.ColumnReward", "Reward")</th>
+                    <th>@Dict("CompanyReport.ColumnRedemptions", "Redemptions")</th>
+                    <th>@Dict("CompanyReport.ColumnPointsSpent", "Points spent")</th>
                 </tr>
             </thead>
             <tbody>
